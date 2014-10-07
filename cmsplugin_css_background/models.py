@@ -31,7 +31,7 @@ class CssBackground(CMSPlugin):
         'position': 'bg_position'
     }
 
-    color = models.CharField(max_length=32, blank=True, default=u'transparent')
+    color = models.CharField(max_length=32, blank=True, default=u'')
     image = models.ImageField(upload_to=get_plugin_media_path)
     repeat = models.CharField(
         _('Tiling'),
