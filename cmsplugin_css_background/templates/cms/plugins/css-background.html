@@ -1,1 +1,7 @@
-{{ instance.as_single_rule }}
+{% if css_selector %}
+<style type="text/css">
+{{ css_selector }} {
+    {{ instance.as_separate_rules }}
+}
+</style>
+{% endif %}
