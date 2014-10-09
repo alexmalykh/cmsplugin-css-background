@@ -1,5 +1,6 @@
 
 from cms.models.pluginmodel import CMSPlugin
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -10,10 +11,15 @@ except ImportError:
         return instance.get_media_path(filename)
 
 
-class CssBackground(CMSPlugin):
+
+
+class CssBackgroundAbstractBase(CMSPlugin):
     '''
-    A CSS background definition.
+    Abstract model class for subclassing CssBackground and FilerCssBackground.
     '''
+    class Meta:
+        abstract = True
+
     REPEAT_CHOICES = (
         ('repeat',      _('Tile in both directions')),
         ('repeat-x',    _('Tile horizontally')),
@@ -32,7 +38,6 @@ class CssBackground(CMSPlugin):
     }
 
     color = models.CharField(max_length=32, blank=True, default=u'')
-    image = models.ImageField(upload_to=get_plugin_media_path)
     repeat = models.CharField(
         _('Tiling'),
         max_length=16,
@@ -83,3 +88,23 @@ class CssBackground(CMSPlugin):
             u'background-{}: {}{};'.format(k, v, important)
             for k, v in rules.items()
         ))
+
+
+class CssBackground(CssBackgroundAbstractBase):
+    '''
+    A CSS Background definition plugin.
+    '''
+    image = models.ImageField(upload_to=get_plugin_media_path)
+
+
+try:
+    from filer.fields.image import FilerImageField
+except ImportError:
+    pass
+else:
+    if 'filer' in settings.INSTALLED_APPS:
+        class FilerCssBackground(CssBackgroundAbstractBase):
+            '''
+            A CSS Background definition plugin, adapted for django-filer.
+            '''
+            image = FilerImageField()
