@@ -89,6 +89,12 @@ class CssBackgroundAbstractBase(CMSPlugin):
             for k, v in rules.items()
         ))
 
+    def __unicode__(self):
+        if self.image:
+            return unicode(self.image.url)
+        else:
+            return u'{} [no image]'.format(self.pk)
+
 
 class CssBackground(CssBackgroundAbstractBase):
     '''
