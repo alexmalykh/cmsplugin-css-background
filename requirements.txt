@@ -1,1 +1,1 @@
-django-cms>=3.0
+django-cms>=3.3,<4.0

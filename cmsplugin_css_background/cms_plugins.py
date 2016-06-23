@@ -9,9 +9,9 @@ from .models import CssBackground
 class CssBackgroundPlugin(CMSPluginBase):
     model = CssBackground
     fields = ('color', 'image',
-              'repeat','attachment', 'bg_position',
+              'repeat', 'attachment', 'bg_position',
               'forced')
-    name = _('Background image')
+    name = _('CSS Background image')
     render_template = 'cms/plugins/css-background.html'
     allow_children = False
 

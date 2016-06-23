@@ -1,4 +1,5 @@
 
+import six
 from cms.models.pluginmodel import CMSPlugin
 from django.conf import settings
 from django.db import models
@@ -11,11 +12,9 @@ except ImportError:
         return instance.get_media_path(filename)
 
 
-
-
 class CssBackgroundAbstractBase(CMSPlugin):
     '''
-    Abstract model class for subclassing CssBackground and FilerCssBackground.
+    Abstract model base class for CssBackground and FilerCssBackground.
     '''
     class Meta:
         abstract = True
@@ -37,7 +36,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
-    color = models.CharField(max_length=32, blank=True, default=u'')
+    color = models.CharField(max_length=32, blank=True, default='')
     repeat = models.CharField(
         _('Tiling'),
         max_length=16,
@@ -53,17 +52,21 @@ class CssBackgroundAbstractBase(CMSPlugin):
         _('Position'),
         max_length=24,
         blank=True,
-        default=u'0% 0%'
+        default='0% 0%'
     )
     # TODO: implement fields for -clip, -origin and -size css properties
     forced = models.BooleanField(
         default=False,
-        help_text=_(u'Mark CSS rules as important.')
+        help_text=_('Mark CSS rules as important.')
     )
 
     @property
     def bg_image(self):
-        return u'url({})'.format(self.image.url) if self.image else u''
+        if self.image:
+            rv = six.text_type('url({})').format(self.image.url)
+        else:
+            rv = six.text_type('')
+        return rv
 
     def as_single_rule(self):
         bits = []
@@ -72,9 +75,9 @@ class CssBackgroundAbstractBase(CMSPlugin):
             if v:
                 bits.append(v)
         if self.forced:
-            bits.append(u'!important')
+            bits.append(six.text_type('!important'))
 
-        return u'background: {};'.format(' '.join(filter(None, bits)))
+        return six.text_type('background: {};').format(' '.join(filter(None, bits)))
 
     def as_separate_rules(self):
         rules = {}
@@ -84,16 +87,22 @@ class CssBackgroundAbstractBase(CMSPlugin):
             if value:
                 rules[prop] = value
         important = u' !important' if self.forced else u''
-        return u'\n'.join((
-            u'background-{}: {}{};'.format(k, v, important)
+        return '\n'.join([
+            six.text_type('background-{}: {}{};').format(k, v, important)
             for k, v in rules.items()
-        ))
+        ])
 
-    def __unicode__(self):
+    def __six_repr(self):
         if self.image:
-            return unicode(self.image.url)
+            rv = self.image.url
         else:
-            return u'{} [no image]'.format(self.pk)
+            rv = '{} [no image]'.format(self.pk)
+        return six.text_type(rv)
+
+    if six.PY3:
+        __str__ = __six_repr
+    elif six.PY2:
+        __unicode__ = __six_repr
 
 
 class CssBackground(CssBackgroundAbstractBase):
