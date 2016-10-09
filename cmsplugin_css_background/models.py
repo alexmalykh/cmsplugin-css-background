@@ -72,12 +72,12 @@ class CssBackgroundAbstractBase(CMSPlugin):
 
     def clean(self):
         errors = []
-        if not self.image and not self.color:
-            errors.append(ValidationError(_('Must specify either the image or color.'), code='empty'))
+        if not self.image and not self.color and not self.div_id and not self.div_classes:
+            errors.append(ValidationError(_('Must specify at least one of: color, image, id or class.'), code='empty'))
         params = {'ids': [o.div_id for o in self._meta.model.objects.filter(placeholder=self.placeholder) if o.div_id]}
         if self.div_id and self.div_id in params['ids']:
             errors.append(ValidationError(_('Div id must be unique within a page. Used values: %(ids)s'),
-                code='repeated', params=params))
+                code='repeated_id', params=params))
         if errors:
             raise ValidationError(errors)
 
@@ -116,12 +116,20 @@ class CssBackgroundAbstractBase(CMSPlugin):
         ])
 
     def __six_repr(self):
+        items = []
+        if self.div_id:
+            items.append('id="{}"'.format(self.div_id))
+        if self.div_classes:
+            items.append('class="{}"'.format(self.div_classes))
+        if self.color:
+            items.append(self.color)
         if self.image:
-            rv = self.image.url
-        elif self.color:
-            rv = self.color
+            items.append(self.image.url)
+
+        if items:
+            rv = ' '.join(items)
         else:
-            rv = '{} [no image]'.format(self.pk)
+            rv = '{} [-----]'.format(self.pk)
         return six.text_type(rv)
 
     if six.PY3:

@@ -60,8 +60,8 @@ Usage
 
 2. Configure the background, id and class CSS styling that will be applied to the
    div element wrapper added by the plugin. All fields may be left blank if not
-   required except there must be either a color or image specified (otherwise there
-   seems little point adding this plugin!).
+   required, except there must be at least one one of: color, image, id or class
+   specified (otherwise there seems little point adding this plugin!).
 
 3. Add or rearrange existing CMS plugins as children to the background plugin.
 
