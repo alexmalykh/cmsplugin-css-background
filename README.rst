@@ -9,8 +9,7 @@ rules.
 Requirements
 ------------
 
-    * Django 1.8+
-    * django CMS 3.3+
+    Have a look in [requirements.txt](requirements.txt)
 
 Installation
 ------------
@@ -38,7 +37,7 @@ Then add the plugin to ``INSTALLED_APPS`` list:
     ]
 
 Ensure ``CMS_PLACEHOLDER_CONF`` is configured to allow one or both of: 
-``CssBackgroundPlugin`` ``FilerCssBackgroundPlugin``
+``CssBackgroundPlugin``, ``FilerCssBackgroundPlugin``
 
 and finally, roll database migrations:
 
@@ -94,6 +93,7 @@ with
 .. code:: django
 
     {{ instance.as_single_rule|safe }}
+
 
    .. Note::
       Using the shorthand property is not recommended because empty properties will
