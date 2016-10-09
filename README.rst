@@ -37,6 +37,9 @@ Then add the plugin to ``INSTALLED_APPS`` list:
         'cmsplugin_css_background',
     ]
 
+Ensure ``CMS_PLACEHOLDER_CONF`` is configured to allow one or both of: 
+``CssBackgroundPlugin`` ``FilerCssBackgroundPlugin``
+
 and finally, roll database migrations:
 
 .. code:: shell
@@ -47,62 +50,55 @@ and finally, roll database migrations:
 Usage
 -----
 
-1. Define a placeholder in your template this way:
-
-   .. code:: django
-
-    {% with css_selector = '#some-element' %}
-        {% placeholder 'some_element_background' %}
-    {% endwith %}
-
-
-   The placeholder might be located almost anywhere, not necessarily
-   within/beside the element you want to change background. But it is
-   recommended to keep both together for convenience.
-
-   Optionally, you might add an entry for your placeholder
-   to ``PLACEHOLDER_CONF`` settings dictionary to restrict allowed plugin types
-   to ``CSS Background`` and assign a readable title to the placeholder's
-   dragbar instead of generated **Some_Element_Background**.
-
-2. Add an instance of ``CSS Background`` from ``Generic`` plugin group to the
-   placeholder in CMS admin.
-
-   .. note::
+1. Add an instance of ``CSS Background`` from the ``Generic`` plugin group to a
+   placeholder on your page in the CMS admin.
+   
+   .. Note::
       This package is aware of ``cmsplugin-filer``. If the latter is
       installed and enabled, then you also get extra ``CSS Background`` plugin
       available in ``Filer`` plugins group. This option allows you to use images
       managed by Filer.
 
-The plugin is rendered as ``<style />`` HTML element in-place, like this:
+2. Configure the background, id and class CSS styling that will be applied to the
+   div element wrapper added by the plugin. All fields may be left blank if not
+   required except there must be either a color or image specified (otherwise there
+   seems little point adding this plugin!).
+
+3. Add or rearrange existing CMS plugins as children to the background plugin.
+
+The plugin is rendered as an inline ``<div>`` HTML element like this:
 
 .. code:: html
 
-    <style type="text/css">
-    #some-element {
-        /* here 'background-' CSS rules go */
-        ...
-    }
-    </style>
+    <div id="one" class="bg" style="background-image: url(bg12.jpg);">
+        <!-- Child plugins here -->
+        <div class="container">
+            <div class="row">
+                ...
+            </div>
+        </div>
+    </div>
 
-There is a single template, located at ``cms/plugins/css-background.html`` and
-it takes a single extra context variable ``css_selector`` which defines the
-element(s) to assign background settings.
+The template used is ``cms/plugins/css-bgwrapper.html``.
 
 By default, background properties are rendered as a list of separate rules,
-but there is one-liner option too. To change the way plugin rendered
-override the plugin template and replace
+but there is shorthand option too. To use this create your own plugin that inherits
+from ours and override the template with your own replacing
 
 .. code:: django
 
-    {{ instance.as_separate_rules }}
+    {{ instance.as_separate_rules|safe }}
 
 with
 
 .. code:: django
 
-    {{ instance.as_single_rule }}
+    {{ instance.as_single_rule|safe }}
 
+   .. Note::
+      Using the shorthand property is not recommended because empty properties will
+      inherit their default values and override less specific CSS properties, as normal
+      for CSS.
 
 .. Translations
 .. ~~~~~~~~~~~~

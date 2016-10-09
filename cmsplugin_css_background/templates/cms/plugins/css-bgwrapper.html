@@ -1,0 +1,11 @@
+{% load cms_tags %}
+
+<div
+{% if instance.div_id %}id="{{ instance.div_id|safe }}"{% endif %}
+{% if instance.div_classes %}class="{{ instance.div_classes|safe }}"{% endif %}
+style="{{ instance.as_separate_rules|safe }}">
+
+    {% for plugin in instance.child_plugin_instances %}
+        {% render_plugin plugin %}
+    {% endfor %}
+</div>

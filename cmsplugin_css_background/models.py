@@ -3,6 +3,7 @@ import six
 from cms.models.pluginmodel import CMSPlugin
 from django.conf import settings
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -20,6 +21,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         abstract = True
 
     REPEAT_CHOICES = (
+        ('',            _('Not specified')),
         ('repeat',      _('Tile in both directions')),
         ('repeat-x',    _('Tile horizontally')),
         ('repeat-y',    _('Tile vertically')),
@@ -27,6 +29,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     ATTACHMENT_CHOICES = (
+        ('',        _('Not specified')),
         ('fixed',   _('Fixed')),
         ('scroll',  _('Scrolling')),
     )
@@ -36,17 +39,24 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
+    div_id =  models.CharField(max_length=32, blank=True, default='',
+        help_text=_("Unique id for the added div element"))
+    div_classes =  models.CharField(max_length=64, blank=True, default='',
+        help_text=_("Classes for the added div element"))
+
     color = models.CharField(max_length=32, blank=True, default='')
     repeat = models.CharField(
         _('Tiling'),
         max_length=16,
         choices=REPEAT_CHOICES,
-        default='repeat'
+        blank=True,
+        default=''
     )
     attachment = models.CharField(
         max_length=8,
         choices=ATTACHMENT_CHOICES,
-        default='scroll'
+        blank=True,
+        default=''
     )
     bg_position = models.CharField(
         _('Position'),
@@ -60,6 +70,17 @@ class CssBackgroundAbstractBase(CMSPlugin):
         help_text=_('Mark CSS rules as important.')
     )
 
+    def clean(self):
+        errors = []
+        if not self.image and not self.color:
+            errors.append(ValidationError(_('Must specify either the image or color.'), code='empty'))
+        params = {'ids': [o.div_id for o in self._meta.model.objects.filter(placeholder=self.placeholder) if o.div_id]}
+        if self.div_id and self.div_id in params['ids']:
+            errors.append(ValidationError(_('Div id must be unique within a page. Used values: %(ids)s'),
+                code='repeated', params=params))
+        if errors:
+            raise ValidationError(errors)
+
     @property
     def bg_image(self):
         if self.image:
@@ -69,6 +90,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
         return rv
 
     def as_single_rule(self):
+        # NOTE: When using the shorthand background property, blank properties will
+        # inherit their individual property default and override less-specific CSS
         bits = []
         for prop in ('color', 'image', 'repeat', 'attachment', 'position'):
             v = getattr(self, self.__CSS_FIELDNAME_MAP__.get(prop, prop))
@@ -95,6 +118,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
     def __six_repr(self):
         if self.image:
             rv = self.image.url
+        elif self.color:
+            rv = self.color
         else:
             rv = '{} [no image]'.format(self.pk)
         return six.text_type(rv)
@@ -109,7 +134,7 @@ class CssBackground(CssBackgroundAbstractBase):
     '''
     A CSS Background definition plugin.
     '''
-    image = models.ImageField(upload_to=get_plugin_media_path)
+    image = models.ImageField(upload_to=get_plugin_media_path, null=True, blank=True)
 
 
 try:
@@ -122,4 +147,4 @@ else:
             '''
             A CSS Background definition plugin, adapted for django-filer.
             '''
-            image = FilerImageField()
+            image = FilerImageField(null=True, blank=True)
