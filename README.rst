@@ -9,7 +9,7 @@ rules.
 Requirements
 ------------
 
-    Have a look in [requirements.txt](requirements.txt)
+Have a look in [requirements.txt](requirements.txt)
 
 Installation
 ------------
@@ -94,11 +94,10 @@ with
 
     {{ instance.as_single_rule|safe }}
 
-
-   .. Note::
-      Using the shorthand property is not recommended because empty properties will
-      inherit their default values and override less specific CSS properties, as normal
-      for CSS.
+.. Note::
+  Using the shorthand property is not recommended because empty properties will
+  inherit their default values and override less specific CSS properties, as normal
+  for CSS.
 
 .. Translations
 .. ~~~~~~~~~~~~
