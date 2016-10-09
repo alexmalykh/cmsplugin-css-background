@@ -9,7 +9,7 @@ rules.
 Requirements
 ------------
 
-Have a look in [requirements.txt](requirements.txt)
+Have a look in `requirements.txt <requirements.txt>`_
 
 Installation
 ------------
