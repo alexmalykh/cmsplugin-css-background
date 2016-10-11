@@ -52,10 +52,10 @@ Usage
 
 1. Define a placeholder in your template like this:
 
-    .. code:: django
-        {% with css_selector='#some-element' %}
-            {% placeholder 'Placeholder Name' %}
-        {% endwith %}
+.. code:: django
+    {% with css_selector='#some-element' %}
+        {% placeholder 'Placeholder Name' %}
+    {% endwith %}
 
    The placeholder can be anywhere but it is recommended to keep it near the
    element specified by the CSS selector. Note that the selector can be any
@@ -89,7 +89,8 @@ The CSS style is added to the sekizai 'css' block in the html head as is require
         }
     </style>
 
-The template used is ``cms/plugins/css-background.html``.
+The template used is `cms/plugins/css-background.html
+<cmsplugin_css_background/templates/cms/plugins/css-background.html>`_.
 
 By default, background properties are rendered as a list of separate rules which
 are omitted if not specified. There is a shorthand option too. To use this create your
