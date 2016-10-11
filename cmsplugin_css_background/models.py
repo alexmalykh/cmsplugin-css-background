@@ -1,7 +1,10 @@
 
-import six
+from __future__ import unicode_literals
+
+import sys
+
 from cms.models.pluginmodel import CMSPlugin
-from django.conf import settings
+from django.apps import apps as django_apps
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -62,11 +65,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
 
     @property
     def bg_image(self):
-        if self.image:
-            rv = six.text_type('url({})').format(self.image.url)
-        else:
-            rv = six.text_type('')
-        return rv
+        return 'url({})'.format(self.image.url) if self.image else ''
 
     def as_single_rule(self):
         bits = []
@@ -75,9 +74,9 @@ class CssBackgroundAbstractBase(CMSPlugin):
             if v:
                 bits.append(v)
         if self.forced:
-            bits.append(six.text_type('!important'))
+            bits.append('!important')
 
-        return six.text_type('background: {};').format(' '.join(filter(None, bits)))
+        return 'background: {};'.format(' '.join(filter(None, bits)))
 
     def as_separate_rules(self):
         rules = {}
@@ -88,21 +87,17 @@ class CssBackgroundAbstractBase(CMSPlugin):
                 rules[prop] = value
         important = u' !important' if self.forced else u''
         return '\n'.join([
-            six.text_type('background-{}: {}{};').format(k, v, important)
+            'background-{}: {}{};'.format(k, v, important)
             for k, v in rules.items()
         ])
 
-    def __six_repr(self):
-        if self.image:
-            rv = self.image.url
-        else:
-            rv = '{} [no image]'.format(self.pk)
-        return six.text_type(rv)
+    def __string_repr(self):
+        return self.image.url if self.image else '{} [no image]'.format(self.pk)
 
-    if six.PY3:
-        __str__ = __six_repr
-    elif six.PY2:
-        __unicode__ = __six_repr
+    if sys.version_info.major > 2:
+        __str__ = __string_repr
+    else:
+        __unicode__ = __string_repr
 
 
 class CssBackground(CssBackgroundAbstractBase):
@@ -117,7 +112,7 @@ try:
 except ImportError:
     pass
 else:
-    if 'filer' in settings.INSTALLED_APPS:
+    if django_apps.is_installed('filer'):
         class FilerCssBackground(CssBackgroundAbstractBase):
             '''
             A CSS Background definition plugin, adapted for django-filer.
