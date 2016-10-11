@@ -13,7 +13,7 @@ class CssBackgroundPlugin(CMSPluginBase):
               'forced')
     name = _('CSS Background')
     render_template = 'cms/plugins/css-background.html'
-    allow_children = True
+    allow_children = False
 
 plugin_pool.register_plugin(CssBackgroundPlugin)
 
