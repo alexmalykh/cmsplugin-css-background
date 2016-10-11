@@ -63,9 +63,16 @@ class CssBackgroundAbstractBase(CMSPlugin):
         help_text=_('Mark CSS rules as important.')
     )
 
+    def get_image_url(self):
+        raise NotImplementedError(
+            'subclasses of CssBackgroundAbstractBase '
+            'must provide a get_image_url() method.'
+        )
+
     @property
     def bg_image(self):
-        return 'url({})'.format(self.image.url) if self.image else ''
+        url = self.get_image_url()
+        return 'url({})'.format(url) if url else ''
 
     def as_single_rule(self):
         bits = []
@@ -92,7 +99,12 @@ class CssBackgroundAbstractBase(CMSPlugin):
         ])
 
     def __string_repr(self):
-        return self.image.url if self.image else '{} [no image]'.format(self.pk)
+        # render strings like
+        # '/path/to/image.jpg' or '#aabbcc'
+        # or '/path/to/image.jpg on #aabbcc'
+        # or 'no image/color'
+        bits = [self.get_image_url(), self.color]
+        return _(' on ').join(filter(None, bits)) or _('no image/color')
 
     if sys.version_info.major > 2:
         __str__ = __string_repr
@@ -106,6 +118,8 @@ class CssBackground(CssBackgroundAbstractBase):
     '''
     image = models.ImageField(upload_to=get_plugin_media_path)
 
+    def get_image_url(self):
+        return self.image.url if self.image else ''
 
 try:
     from filer.fields.image import FilerImageField
@@ -118,3 +132,6 @@ else:
             A CSS Background definition plugin, adapted for django-filer.
             '''
             image = FilerImageField()
+
+            def get_image_url(self):
+                return self.image.url if self.image_id else ''

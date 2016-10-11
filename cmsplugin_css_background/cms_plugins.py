@@ -13,7 +13,7 @@ class CssBackgroundPlugin(CMSPluginBase):
     fields = ('color', 'image',
               'repeat', 'attachment', 'bg_position',
               'forced')
-    name = _('CSS Background image')
+    name = _('CSS Background')
     render_template = 'cmsplugin_css_background/css-background.html'
     allow_children = False
 
