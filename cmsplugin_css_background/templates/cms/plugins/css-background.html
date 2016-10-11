@@ -1,9 +1,11 @@
 {% load sekizai_tags %}
 {% comment %}HTML4 requires all css style tags in the html head{% endcomment %}
 {% if css_selector %}
-{% addtoblock "css" %}<style type="text/css">
-{{ css_selector }} {
-    {{ instance.as_separate_rules }}
-}
-</style>{% endaddtoblock %}
+{% addtoblock "css" %}
+<style type="text/css">
+    {{ css_selector }} {
+        {{ instance.as_separate_rules }}
+    }
+</style>
+{% endaddtoblock %}
 {% endif %}

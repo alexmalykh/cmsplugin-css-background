@@ -3,6 +3,7 @@ import six
 from cms.models.pluginmodel import CMSPlugin
 from django.conf import settings
 from django.db import models
+from django.utils.html import format_html
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
@@ -39,11 +40,6 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
-    div_id =  models.CharField(max_length=32, blank=True, default='',
-        help_text=_("Unique id for the added div element"))
-    div_classes =  models.CharField(max_length=64, blank=True, default='',
-        help_text=_("Classes for the added div element"))
-
     color = models.CharField(max_length=32, blank=True, default='')
     repeat = models.CharField(
         _('Tiling'),
@@ -62,7 +58,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         _('Position'),
         max_length=24,
         blank=True,
-        default='0% 0%'
+        default=''
     )
     # TODO: implement fields for -clip, -origin and -size css properties
     forced = models.BooleanField(
@@ -71,15 +67,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     def clean(self):
-        errors = []
-        if not self.image and not self.color and not self.div_id and not self.div_classes:
-            errors.append(ValidationError(_('Must specify at least one of: color, image, id or class.'), code='empty'))
-        params = {'ids': [o.div_id for o in self._meta.model.objects.filter(placeholder=self.placeholder) if o.div_id]}
-        if self.div_id and self.div_id in params['ids']:
-            errors.append(ValidationError(_('Div id must be unique within a page. Used values: %(ids)s'),
-                code='repeated_id', params=params))
-        if errors:
-            raise ValidationError(errors)
+        if not self.image and not self.color:
+            raise ValidationError(_('Please specify at least one of: color or image.'))
 
     @property
     def bg_image(self):
@@ -117,20 +106,15 @@ class CssBackgroundAbstractBase(CMSPlugin):
 
     def __six_repr(self):
         items = []
-        if self.div_id:
-            items.append('id="{}"'.format(self.div_id))
-        if self.div_classes:
-            items.append('class="{}"'.format(self.div_classes))
         if self.color:
             items.append(self.color)
         if self.image:
             items.append(self.image.url)
 
         if items:
-            rv = ' '.join(items)
+            return format_html('<code>{}</code>', ', '.join(items))
         else:
-            rv = '{} [-----]'.format(self.pk)
-        return six.text_type(rv)
+            return six.text_type('{} [-----]'.format(self.pk))
 
     if six.PY3:
         __str__ = __six_repr
