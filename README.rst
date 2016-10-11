@@ -1,6 +1,7 @@
 cmsplugin-css-background
 ========================
 .. _django CMS: https://django-cms.org
+.. _django-sekizai: http://django-sekizai.readthedocs.io
 
 `django CMS`_ plugin for configuring background images in edit mode via CSS
 rules.
@@ -65,7 +66,7 @@ Usage
    to ``CSS Background`` and assign a readable title to the placeholder's
    dragbar instead of generated **Some_Element_Background**.
 
-2. Add an instance of ``CSS Background`` from ``Generic`` plugin group to the
+2. Add an instance of ``CSS Background`` from the ``Generic`` plugin group to the
    placeholder in CMS admin.
 
    .. note::
@@ -85,9 +86,23 @@ The plugin is rendered as ``<style />`` HTML element in-place, like this:
     }
     </style>
 
-There is a single template, located at ``cms/plugins/css-background.html`` and
-it takes a single extra context variable ``css_selector`` which defines the
-element(s) to assign background settings.
+but it is possible to make the plugin render in HTML ``<HEAD/>`` section
+to keep compliance with W3 standards: just wrap the containing placeholder
+in django-sekizai_'s ``addtoblock`` tag and then render corresponding
+block with ``render_block``:
+
+.. code:: Django
+
+    {% addtoblock 'css' %}
+    {% with css_selector = '#some-element' %}
+        {% placeholder 'some_element_background' %}
+    {% endwith %}
+    {% endaddtoblock }
+
+There is a single template, located at
+``cmsplugin_css_background/css-background.html`` and it takes a single extra
+context variable ``css_selector`` which defines the element(s) to assign
+background settings.
 
 By default, background properties are rendered as a list of separate rules,
 but there is one-liner option too. To change the way plugin rendered
@@ -107,4 +122,3 @@ with
 .. Translations
 .. ~~~~~~~~~~~~
 .. you can help to translate this plugin at Transifex
-
