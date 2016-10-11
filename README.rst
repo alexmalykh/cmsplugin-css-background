@@ -53,6 +53,7 @@ Usage
 1. Define a placeholder in your template like this:
 
 .. code:: django
+
     {% with css_selector='#some-element' %}
         {% placeholder 'Placeholder Name' %}
     {% endwith %}
