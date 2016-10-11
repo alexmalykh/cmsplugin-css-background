@@ -52,11 +52,11 @@ Usage
 
 1. Define a placeholder in your template like this:
 
-.. code:: django
+   .. code:: django
 
-    {% with css_selector='#some-element' %}
-        {% placeholder 'Placeholder Name' %}
-    {% endwith %}
+        {% with css_selector='#some-element' %}
+            {% placeholder 'Placeholder Name' %}
+        {% endwith %}
 
    The placeholder can be anywhere but it is recommended to keep it near the
    element specified by the CSS selector. Note that the selector can be any
