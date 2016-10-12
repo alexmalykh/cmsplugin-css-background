@@ -1,6 +1,7 @@
 cmsplugin-css-background
 ========================
 .. _django CMS: https://django-cms.org
+.. _django-sekizai: http://django-sekizai.readthedocs.io
 
 `django CMS`_ plugin for configuring background images in edit mode via CSS
 rules.
@@ -36,7 +37,7 @@ Then add the plugin to ``INSTALLED_APPS`` list:
         'cmsplugin_css_background',
     ]
 
-Ensure ``CMS_PLACEHOLDER_CONF`` is configured to allow one or both of: 
+Ensure ``CMS_PLACEHOLDER_CONF`` is configured to allow one or both of:
 ``CssBackgroundPlugin`` or ``FilerCssBackgroundPlugin`` for the placeholder
 specified in your template as described in usage below.
 
@@ -54,9 +55,9 @@ Usage
 
    .. code:: django
 
-        {% with css_selector='#some-element' %}
-            {% placeholder 'Placeholder Name' %}
-        {% endwith %}
+    {% with css_selector='#some-element' %}
+        {% placeholder 'Placeholder Name' %}
+    {% endwith %}
 
    The placeholder can be anywhere but it is recommended to keep it near the
    element specified by the CSS selector. Note that the selector can be any
@@ -64,7 +65,7 @@ Usage
 
 2. Add an instance of ``CSS Background`` from the ``Generic`` plugin group to the
    created placeholder on your page in the CMS admin.
-   
+
    .. Note::
       This package is aware of ``cmsplugin-filer``. If this package is
       installed and enabled, then you also get a ``CSS Background`` plugin
@@ -74,7 +75,8 @@ Usage
 3. Configure the required background CSS styling that will be applied to the
    element. All fields may be left blank if not required, except there must be
    at least one one of: color or image specified (otherwise there seems little
-   point in adding this plugin!).
+   point in adding this plugin!). Styling is blank by default so that you need
+   only override the CSS properties required and inherit everything else.
 
 The CSS style is added to the sekizai 'css' block in the html head as is required by HTML4:
 
@@ -90,8 +92,8 @@ The CSS style is added to the sekizai 'css' block in the html head as is require
         }
     </style>
 
-The template used is `cms/plugins/css-background.html
-<cmsplugin_css_background/templates/cms/plugins/css-background.html>`_.
+The template used is `cmsplugin_css_background/css-background.html
+<cmsplugin_css_background/templates/cmsplugin_css_background/css-background.html>`_.
 
 By default, background properties are rendered as a list of separate rules which
 are omitted if not specified. There is a shorthand option too. To use this create your
@@ -115,4 +117,3 @@ with
 .. Translations
 .. ~~~~~~~~~~~~
 .. you can help to translate this plugin at Transifex
-
