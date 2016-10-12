@@ -24,7 +24,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         abstract = True
 
     REPEAT_CHOICES = (
-        ('',            _('Not specified')),
+        ('',            _('Inherit')),
         ('repeat',      _('Tile in both directions')),
         ('repeat-x',    _('Tile horizontally')),
         ('repeat-y',    _('Tile vertically')),
@@ -32,7 +32,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     ATTACHMENT_CHOICES = (
-        ('',        _('Not specified')),
+        ('',        _('Inherit')),
         ('fixed',   _('Fixed')),
         ('scroll',  _('Scrolling')),
     )
@@ -42,7 +42,14 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
-    color = models.CharField(max_length=32, blank=True, default='')
+    _blank_help = _('Blank will inherit page CSS styling.')
+
+    color = models.CharField(
+        max_length=32,
+        blank=True,
+        default='',
+        help_text=_blank_help
+    )
     repeat = models.CharField(
         _('Tiling'),
         max_length=16,
@@ -60,7 +67,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
         _('Position'),
         max_length=24,
         blank=True,
-        default=''
+        default='',
+        help_text=_blank_help
     )
     # TODO: implement fields for -clip, -origin and -size css properties
     forced = models.BooleanField(
@@ -129,7 +137,12 @@ class CssBackground(CssBackgroundAbstractBase):
     '''
     A CSS Background definition plugin.
     '''
-    image = models.ImageField(upload_to=get_plugin_media_path, null=True, blank=True)
+    image = models.ImageField(
+        upload_to=get_plugin_media_path,
+        null=True,
+        blank=True,
+        help_text=CssBackgroundAbstractBase._blank_help
+    )
 
     def get_image_url(self):
         return self.image.url if self.image else ''
@@ -144,8 +157,11 @@ else:
             '''
             A CSS Background definition plugin, adapted for django-filer.
             '''
-
-            image = FilerImageField(null=True, blank=True)
+            image = FilerImageField(
+                null=True,
+                blank=True,
+                help_text=CssBackgroundAbstractBase._blank_help
+            )
 
             def get_image_url(self):
                 return self.image.url if self.image_id else ''
