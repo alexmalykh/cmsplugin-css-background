@@ -42,10 +42,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
-    # NOTE: fields default values are set
-    #       to conform defaults defined in W3 CSS specs
-
-    color = models.CharField(max_length=32, blank=True, default='transparent')
+    color = models.CharField(max_length=32, blank=True, default='')
     repeat = models.CharField(
         _('Tiling'),
         max_length=16,
