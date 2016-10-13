@@ -25,6 +25,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         abstract = True
 
     REPEAT_CHOICES = (
+        ('',            _('Inherit')),
         ('repeat',      _('Tile in both directions')),
         ('repeat-x',    _('Tile horizontally')),
         ('repeat-y',    _('Tile vertically')),
@@ -32,6 +33,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     ATTACHMENT_CHOICES = (
+        ('',        _('Inherit')),
         ('fixed',   _('Fixed')),
         ('scroll',  _('Scrolling')),
     )
@@ -43,26 +45,31 @@ class CssBackgroundAbstractBase(CMSPlugin):
 
     _blank_help = _('Leave blank to fall back to previously applied CSS rule.')
 
-    # NOTE: fields default values are set
-    #       to conform defaults defined in W3 CSS specs
-
-    color = models.CharField(max_length=32, blank=True, default='transparent')
+    color = models.CharField(
+        max_length=32,
+        blank=True,
+        default='transparent',
+        help_text=_blank_help
+    )
     repeat = models.CharField(
         _('Tiling'),
         max_length=16,
         choices=REPEAT_CHOICES,
-        default='repeat'
+        blank=True,
+        default=''
     )
     attachment = models.CharField(
         max_length=8,
         choices=ATTACHMENT_CHOICES,
-        default='scroll'
+        blank=True,
+        default=''
     )
     bg_position = models.CharField(
         _('Position'),
         max_length=24,
         blank=True,
-        default='0% 0%'
+        default='',
+        help_text=_blank_help
     )
     # TODO: implement fields for -clip, -origin and -size css properties
     forced = models.BooleanField(
