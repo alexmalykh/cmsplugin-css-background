@@ -48,12 +48,12 @@ and finally, roll database migrations:
 Usage
 -----
 
-1. Define a placeholder in your template this way:
+1. Define a placeholder in your template like this:
 
    .. code:: django
 
-    {% with css_selector = '#some-element' %}
-        {% placeholder 'some_element_background' %}
+    {% with css_selector='#some-element' %}
+        {% placeholder 'Placeholder Name' %}
     {% endwith %}
 
 
