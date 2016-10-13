@@ -114,10 +114,11 @@ class CssBackgroundAbstractBase(CMSPlugin):
     def __string_repr(self):
         # render strings like
         # '/path/to/image.jpg' or '#aabbcc'
-        # or '/path/to/image.jpg on #aabbcc'
+        # or '/path/to/image.jpg over #aabbcc'
         # or 'no image/color'
         bits = [self.get_image_url(), self.color]
-        return _(' on ').join(filter(None, bits)) or _('no image/color')
+        s = _(' over ').join(filter(None, bits)) or _('no image/color')
+        return force_text(s)
 
     if sys.version_info.major > 2:
         __str__ = __string_repr
