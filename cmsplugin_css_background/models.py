@@ -5,7 +5,9 @@ import sys
 
 from cms.models.pluginmodel import CMSPlugin
 from django.apps import apps as django_apps
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -39,6 +41,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
+    _blank_help = _('Leave blank to fall back to previously applied CSS rule.')
+
     # NOTE: fields default values are set
     #       to conform defaults defined in W3 CSS specs
 
@@ -66,6 +70,10 @@ class CssBackgroundAbstractBase(CMSPlugin):
         help_text=_('Mark CSS rules as important.')
     )
 
+    def clean(self):
+        if not (self.color or self.image):
+            raise ValidationError(_('Color or image must be provided at least.'))
+
     def get_image_url(self):
         raise NotImplementedError(
             'subclasses of CssBackgroundAbstractBase '
@@ -78,6 +86,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
         return 'url({})'.format(url) if url else ''
 
     def as_single_rule(self):
+        # NOTE: When using the shorthand background property, blank properties will
+        # inherit their individual property default and override less-specific CSS
         bits = []
         for prop in ('color', 'image', 'repeat', 'attachment', 'position'):
             v = getattr(self, self.__CSS_FIELDNAME_MAP__.get(prop, prop))
@@ -119,10 +129,16 @@ class CssBackground(CssBackgroundAbstractBase):
     '''
     A CSS Background definition plugin.
     '''
-    image = models.ImageField(upload_to=get_plugin_media_path)
+    image = models.ImageField(
+        upload_to=get_plugin_media_path,
+        null=True,
+        blank=True,
+        help_text=CssBackgroundAbstractBase._blank_help
+    )
 
     def get_image_url(self):
         return self.image.url if self.image else ''
+
 
 try:
     from filer.fields.image import FilerImageField
@@ -134,7 +150,11 @@ else:
             '''
             A CSS Background definition plugin, adapted for django-filer.
             '''
-            image = FilerImageField()
+            image = FilerImageField(
+                null=True,
+                blank=True,
+                help_text=CssBackgroundAbstractBase._blank_help
+            )
 
             def get_image_url(self):
                 return self.image.url if self.image_id else ''
