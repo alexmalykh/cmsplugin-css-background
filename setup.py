@@ -20,7 +20,7 @@ setup_params = dict(
     license='MIT License',
     url='https://github.com/alexmalykh/cmsplugin-css-background',
     packages=setuptools.find_packages(),
-    install_requires=['django-cms>=3.3,<4.0'],
+    install_requires=['django-cms>=3.3,<4.0', 'django-sekizai>=0.7'],
     setup_requires=['setuptools_scm'],
     include_package_data=True,
     zip_safe=False,

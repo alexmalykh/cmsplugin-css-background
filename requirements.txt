@@ -1,1 +1,2 @@
 django-cms>=3.3,<4.0
+django-sekizai>=0.7
