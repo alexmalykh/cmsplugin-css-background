@@ -2,6 +2,7 @@ cmsplugin-css-background
 ========================
 .. _django CMS: https://django-cms.org
 .. _django-sekizai: http://django-sekizai.readthedocs.io
+.. _cmsplugin-filer: https://github.com/divio/cmsplugin-filer
 
 `django CMS`_ plugin for configuring background images in edit mode via CSS
 rules.
@@ -56,26 +57,26 @@ Usage
         {% placeholder 'Placeholder Name' %}
     {% endwith %}
 
-
-   The placeholder might be located almost anywhere, not necessarily
-   within/beside the element you want to change background. But it is
-   recommended to keep both together for convenience.
-
-   Optionally, you might add an entry for your placeholder
-   to ``PLACEHOLDER_CONF`` settings dictionary to restrict allowed plugin types
-   to ``CSS Background`` and assign a readable title to the placeholder's
-   dragbar instead of generated **Some_Element_Background**.
+   The placeholder can be anywhere but it is recommended to keep it near the
+   element specified by the CSS selector. Note that the selector can be any
+   valid CSS selector, not just an id.
 
 2. Add an instance of ``CSS Background`` from the ``Generic`` plugin group to the
-   placeholder in CMS admin.
+   created placeholder on your page in the CMS admin.
 
    .. note::
-      This package is aware of ``cmsplugin-filer``. If the latter is
+      This package is aware of `cmsplugin-filer`_. If it is
       installed and enabled, then you also get extra ``CSS Background`` plugin
-      available in ``Filer`` plugins group. This option allows you to use images
+      available in the ``Filer`` plugins group. This allows you to use images
       managed by Filer.
 
-The plugin is rendered as ``<style />`` HTML element in-place, like this:
+3. Configure the required background CSS styling that will be applied to the
+   element. All fields may be left blank if not required, but at least
+   color or image must be provided. Omitted properties cascade down
+   to corresponding lower-priority styling.
+
+The CSS style definition is added to the sekizai ``css`` block in the ``<head/>``
+element, in compliance with W3 specs:
 
 .. code:: html
 
@@ -86,27 +87,13 @@ The plugin is rendered as ``<style />`` HTML element in-place, like this:
     }
     </style>
 
-but it is possible to make the plugin render in HTML ``<HEAD/>`` section
-to keep compliance with W3 standards: just wrap the containing placeholder
-in django-sekizai_'s ``addtoblock`` tag and then render corresponding
-block with ``render_block``:
+The template used is `cmsplugin_css_background/css-background.html
+<cmsplugin_css_background/templates/cmsplugin_css_background/css-background.html>`_.
 
-.. code:: Django
-
-    {% addtoblock 'css' %}
-    {% with css_selector = '#some-element' %}
-        {% placeholder 'some_element_background' %}
-    {% endwith %}
-    {% endaddtoblock }
-
-There is a single template, located at
-``cmsplugin_css_background/css-background.html`` and it takes a single extra
-context variable ``css_selector`` which defines the element(s) to assign
-background settings.
-
-By default, background properties are rendered as a list of separate rules,
-but there is one-liner option too. To change the way plugin rendered
-override the plugin template and replace
+By default, background properties are rendered as a list of separate rules
+(which are omitted if not specified), but there is a shorthand option too.
+To use it just override ``cmsplugin_css_background/css-background.html`` template
+somewhere in your project tree and replace
 
 .. code:: django
 
@@ -118,6 +105,11 @@ with
 
     {{ instance.as_single_rule }}
 
+.. note::
+   Using the shorthand property is not recommended because empty properties will
+   fall back to default values defined in W3 specs, thus preventing cascading
+   down to lower-priority rules (it they are defined). This is normal for CSS,
+   but in some cases it might be not what you're expecting.
 
 .. Translations
 .. ~~~~~~~~~~~~
