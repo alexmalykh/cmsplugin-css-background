@@ -25,7 +25,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         abstract = True
 
     REPEAT_CHOICES = (
-        ('',            _('Inherit')),
+        ('',            _('Not specified')),
         ('repeat',      _('Tile in both directions')),
         ('repeat-x',    _('Tile horizontally')),
         ('repeat-y',    _('Tile vertically')),
@@ -33,7 +33,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     ATTACHMENT_CHOICES = (
-        ('',        _('Inherit')),
+        ('',        _('Not specified')),
         ('fixed',   _('Fixed')),
         ('scroll',  _('Scrolling')),
     )
@@ -94,7 +94,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
 
     def as_single_rule(self):
         # NOTE: When using the shorthand background property, blank properties will
-        # inherit their individual property default and override less-specific CSS
+        # have their individual property default and won't cascade down
+        # to corresponding lower-priority rules.
         bits = []
         for prop in ('color', 'image', 'repeat', 'attachment', 'position'):
             v = getattr(self, self.__CSS_FIELDNAME_MAP__.get(prop, prop))

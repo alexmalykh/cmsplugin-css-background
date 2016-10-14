@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cssbackground',
             name='attachment',
-            field=models.CharField(blank=True, max_length=8, choices=[('', 'Inherit'), ('fixed', 'Fixed'), ('scroll', 'Scrolling')], default=''),
+            field=models.CharField(blank=True, max_length=8, choices=[('', 'Not specified'), ('fixed', 'Fixed'), ('scroll', 'Scrolling')], default=''),
         ),
         migrations.AlterField(
             model_name='cssbackground',
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cssbackground',
             name='repeat',
-            field=models.CharField(verbose_name='Tiling', max_length=16, choices=[('', 'Inherit'), ('repeat', 'Tile in both directions'), ('repeat-x', 'Tile horizontally'), ('repeat-y', 'Tile vertically'), ('no-repeat', 'No tiling')], default='', blank=True),
+            field=models.CharField(verbose_name='Tiling', max_length=16, choices=[('', 'Not specified'), ('repeat', 'Tile in both directions'), ('repeat-x', 'Tile horizontally'), ('repeat-y', 'Tile vertically'), ('no-repeat', 'No tiling')], default='', blank=True),
         ),
     ]
 
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
             migrations.AlterField(
                 model_name='filercssbackground',
                 name='attachment',
-                field=models.CharField(blank=True, max_length=8, choices=[('', 'Inherit'), ('fixed', 'Fixed'), ('scroll', 'Scrolling')], default=''),
+                field=models.CharField(blank=True, max_length=8, choices=[('', 'Not specified'), ('fixed', 'Fixed'), ('scroll', 'Scrolling')], default=''),
             ),
             migrations.AlterField(
                 model_name='filercssbackground',
@@ -57,6 +57,6 @@ class Migration(migrations.Migration):
             migrations.AlterField(
                 model_name='filercssbackground',
                 name='repeat',
-                field=models.CharField(verbose_name='Tiling', max_length=16, choices=[('', 'Inherit'), ('repeat', 'Tile in both directions'), ('repeat-x', 'Tile horizontally'), ('repeat-y', 'Tile vertically'), ('no-repeat', 'No tiling')], default='', blank=True),
+                field=models.CharField(verbose_name='Tiling', max_length=16, choices=[('', 'Not specified'), ('repeat', 'Tile in both directions'), ('repeat-x', 'Tile horizontally'), ('repeat-y', 'Tile vertically'), ('no-repeat', 'No tiling')], default='', blank=True),
             ),
         ]
