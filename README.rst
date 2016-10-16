@@ -2,6 +2,7 @@ cmsplugin-css-background
 ========================
 .. _django CMS: https://django-cms.org
 .. _django-sekizai: http://django-sekizai.readthedocs.io
+.. _cmsplugin-filer: https://github.com/divio/cmsplugin-filer
 
 `django CMS`_ plugin for configuring background images in edit mode via CSS
 rules.
@@ -73,12 +74,12 @@ Usage
       managed by Filer.
 
 3. Configure the required background CSS styling that will be applied to the
-   element. All fields may be left blank if not required, except there must be
-   at least one one of: color or image specified (otherwise there seems little
-   point in adding this plugin!). Styling is blank by default so that you need
-   only override the CSS properties required and inherit everything else.
+   element. All fields may be left blank if not required, but at least
+   color or image must be provided. Omitted properties cascade down
+   to corresponding lower-priority styling.
 
-The CSS style is added to the sekizai 'css' block in the html head as is required by HTML4:
+The CSS style definition is added to the sekizai ``css`` block in the ``<head/>``
+element, in compliance with W3 specs:
 
 .. code:: html
 
@@ -95,9 +96,13 @@ The CSS style is added to the sekizai 'css' block in the html head as is require
 The template used is `cmsplugin_css_background/css-background.html
 <cmsplugin_css_background/templates/cmsplugin_css_background/css-background.html>`_.
 
-By default, background properties are rendered as a list of separate rules which
-are omitted if not specified. There is a shorthand option too. To use this create your
-own plugin that inherits from this and override the template with your own replacing
+It takes an extra optional context variable ``sekizai_block`` which can be used
+to override default ``css`` block name.
+
+By default, background properties are rendered as a list of separate rules
+(which are omitted if not specified), but there is a shorthand option too.
+To use it just override ``cmsplugin_css_background/css-background.html`` template
+somewhere in your project tree and replace
 
 .. code:: django
 
@@ -109,10 +114,11 @@ with
 
     {{ instance.as_single_rule|safe }}
 
-.. Note::
-  Using the shorthand property is not recommended because empty properties will
-  inherit their default values and override less specific CSS properties, as normal
-  for CSS.
+.. note::
+   Using the shorthand property is not recommended because empty properties will
+   fall back to default values defined in W3 specs, thus preventing cascading
+   down to lower-priority rules (it they are defined). This is normal for CSS,
+   but in some cases it might be not what you're expecting.
 
 .. Translations
 .. ~~~~~~~~~~~~

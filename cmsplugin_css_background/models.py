@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import sys
 from cms.models.pluginmodel import CMSPlugin
 from django.apps import apps as django_apps
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.html import format_html_join
 from django.core.exceptions import ValidationError
@@ -24,7 +25,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         abstract = True
 
     REPEAT_CHOICES = (
-        ('',            _('Inherit')),
+        ('',            _('Not specified')),
         ('repeat',      _('Tile in both directions')),
         ('repeat-x',    _('Tile horizontally')),
         ('repeat-y',    _('Tile vertically')),
@@ -32,7 +33,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     ATTACHMENT_CHOICES = (
-        ('',        _('Inherit')),
+        ('',        _('Not specified')),
         ('fixed',   _('Fixed')),
         ('scroll',  _('Scrolling')),
     )
@@ -42,7 +43,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
         'position': 'bg_position'
     }
 
-    _blank_help = _('Blank will inherit page CSS styling.')
+    _blank_help = _('Leave blank to fall back to previously applied CSS rule.')
 
     color = models.CharField(
         max_length=32,
@@ -76,7 +77,6 @@ class CssBackgroundAbstractBase(CMSPlugin):
         help_text=_('Mark CSS rules as important.')
     )
 
-
     def clean(self):
         if not self.image and not self.color:
             raise ValidationError(_('Please specify at least one of: color or image.'))
@@ -94,7 +94,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
 
     def as_single_rule(self):
         # NOTE: When using the shorthand background property, blank properties will
-        # inherit their individual property default and override less-specific CSS
+        # have their individual property default and won't cascade down
+        # to corresponding lower-priority rules.
         bits = []
         for prop in ('color', 'image', 'repeat', 'attachment', 'position'):
             v = getattr(self, self.__CSS_FIELDNAME_MAP__.get(prop, prop))
@@ -146,6 +147,7 @@ class CssBackground(CssBackgroundAbstractBase):
 
     def get_image_url(self):
         return self.image.url if self.image else ''
+
 
 try:
     from filer.fields.image import FilerImageField
