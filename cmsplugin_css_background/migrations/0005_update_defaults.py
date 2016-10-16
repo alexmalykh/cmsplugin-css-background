@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cssbackground',
             name='color',
-            field=models.CharField(blank=True, default='', help_text='Leave blank to fall back to previously applied CSS rule.', max_length=32),
+            field=models.CharField(blank=True, max_length=32, help_text='Leave blank to fall back to previously applied CSS rule.', default=''),
         ),
         migrations.AlterField(
             model_name='cssbackground',
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             migrations.AlterField(
                 model_name='filercssbackground',
                 name='color',
-                field=models.CharField(blank=True, default='', help_text='Leave blank to fall back to previously applied CSS rule.', max_length=32),
+                field=models.CharField(blank=True, max_length=32, help_text='Leave blank to fall back to previously applied CSS rule.', default=''),
             ),
             migrations.AlterField(
                 model_name='filercssbackground',
