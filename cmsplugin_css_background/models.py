@@ -48,7 +48,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
     color = models.CharField(
         max_length=32,
         blank=True,
-        default='transparent',
+        default='',
         help_text=_blank_help
     )
     repeat = models.CharField(
