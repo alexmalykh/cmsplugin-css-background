@@ -89,8 +89,6 @@ element, in compliance with W3 specs:
 
 The template used is `cmsplugin_css_background/css-background.html
 <cmsplugin_css_background/templates/cmsplugin_css_background/css-background.html>`_.
-It takes an extra optional context variable ``sekizai_block`` which can be used
-to override default ``css`` block name.
 
 By default, background properties are rendered as a list of separate rules
 (which are omitted if not specified), but there is a shorthand option too.
