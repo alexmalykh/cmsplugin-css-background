@@ -28,4 +28,7 @@ else:
     class FilerCssBackgroundPlugin(CssBackgroundPlugin):
         model = FilerCssBackground
         module = 'Filer'
+        fields = ('color', ('image', 'thumbnailoption'),
+                  'repeat', 'attachment', 'bg_position',
+                  'forced')
     plugin_pool.register_plugin(FilerCssBackgroundPlugin)
