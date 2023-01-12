@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CssBackground',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete=models.deletion.CASCADE, primary_key=True, related_name='cmsplugin_css_background_cssbackground', serialize=False, to='cms.CMSPlugin')),
                 ('color', models.CharField(default=b'', max_length=32, blank=True)),
                 ('repeat', models.CharField(default=b'repeat', max_length=16, verbose_name='Tiling', choices=[(b'repeat', 'Tile in both directions'), (b'repeat-x', 'Tile horizontally'), (b'repeat-y', 'Tile vertically'), (b'no-repeat', 'No tiling')])),
                 ('attachment', models.CharField(default=b'scroll', max_length=8, choices=[(b'fixed', 'Fixed'), (b'scroll', 'Scrolling')])),

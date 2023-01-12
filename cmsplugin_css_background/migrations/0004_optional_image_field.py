@@ -32,6 +32,6 @@ class Migration(migrations.Migration):
             migrations.AlterField(
                 model_name='filercssbackground',
                 name='image',
-                field=filer.fields.image.FilerImageField(help_text='Leave blank to fall back to previously applied CSS rule.', null=True, blank=True, to='filer.Image'),
+                field=filer.fields.image.FilerImageField(help_text='Leave blank to fall back to previously applied CSS rule.', null=True, blank=True, to='filer.Image', on_delete=models.SET_NULL),
             ),
         ]

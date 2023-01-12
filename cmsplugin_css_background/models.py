@@ -160,6 +160,7 @@ else:
             A CSS Background definition plugin, adapted for django-filer.
             '''
             image = FilerImageField(
+                on_delete=models.SET_NULL,
                 null=True,
                 blank=True,
                 help_text=CssBackgroundAbstractBase._blank_help
