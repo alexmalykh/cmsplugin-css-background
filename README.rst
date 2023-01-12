@@ -11,8 +11,7 @@ rules.
 Requirements
 ------------
 
-    * Django 1.8+
-    * django CMS 3.3+
+Have a look in `requirements.txt <requirements.txt>`_
 
 Installation
 ------------
@@ -39,6 +38,10 @@ Then add the plugin to ``INSTALLED_APPS`` list:
         'cmsplugin_css_background',
     ]
 
+Ensure ``CMS_PLACEHOLDER_CONF`` is configured to allow one or both of:
+``CssBackgroundPlugin`` or ``FilerCssBackgroundPlugin`` for the placeholder
+specified in your template as described in usage below.
+
 and finally, roll database migrations:
 
 .. code:: shell
@@ -64,9 +67,9 @@ Usage
 2. Add an instance of ``CSS Background`` from the ``Generic`` plugin group to the
    created placeholder on your page in the CMS admin.
 
-   .. note::
-      This package is aware of `cmsplugin-filer`_. If it is
-      installed and enabled, then you also get extra ``CSS Background`` plugin
+   .. Note::
+      This package is aware of ``cmsplugin-filer``. If this package is
+      installed and enabled, then you also get a ``CSS Background`` plugin
       available in the ``Filer`` plugins group. This allows you to use images
       managed by Filer.
 
@@ -81,10 +84,13 @@ element, in compliance with W3 specs:
 .. code:: html
 
     <style type="text/css">
-    #some-element {
-        /* here 'background-' CSS rules go */
-        ...
-    }
+        #some-element {
+            background-image: url(image.png) !important;
+            background-color: yellow !important;
+            background-attachment: scroll !important;
+            background-repeat: no-repeat !important;
+            background-position: center top !important;
+        }
     </style>
 
 The template used is `cmsplugin_css_background/css-background.html
@@ -97,13 +103,13 @@ somewhere in your project tree and replace
 
 .. code:: django
 
-    {{ instance.as_separate_rules }}
+    {{ instance.as_separate_rules|safe }}
 
 with
 
 .. code:: django
 
-    {{ instance.as_single_rule }}
+    {{ instance.as_single_rule|safe }}
 
 .. note::
    Using the shorthand property is not recommended because empty properties will

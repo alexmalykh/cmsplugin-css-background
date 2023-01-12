@@ -1,13 +1,13 @@
-
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import sys
-
 from cms.models.pluginmodel import CMSPlugin
 from django.apps import apps as django_apps
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.html import format_html_join
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -78,8 +78,8 @@ class CssBackgroundAbstractBase(CMSPlugin):
     )
 
     def clean(self):
-        if not (self.color or self.image):
-            raise ValidationError(_('Color or image must be provided at least.'))
+        if not self.image and not self.color:
+            raise ValidationError(_('Please specify at least one of: color or image.'))
 
     def get_image_url(self):
         raise NotImplementedError(
@@ -113,7 +113,7 @@ class CssBackgroundAbstractBase(CMSPlugin):
             value = getattr(self, fieldname)
             if value:
                 rules[prop] = value
-        important = u' !important' if self.forced else u''
+        important = ' !important' if self.forced else ''
         return '\n'.join([
             'background-{}: {}{};'.format(k, v, important)
             for k, v in rules.items()
@@ -122,11 +122,11 @@ class CssBackgroundAbstractBase(CMSPlugin):
     def __string_repr(self):
         # render strings like
         # '/path/to/image.jpg' or '#aabbcc'
-        # or '/path/to/image.jpg over #aabbcc'
+        # or '#aabbcc behind /path/to/image.jpg'
         # or 'no image/color'
-        bits = [self.get_image_url(), self.color]
-        s = _(' over ').join(filter(None, bits)) or _('no image/color')
-        return force_text(s)
+        bits = format_html_join(_(' behind '), '<code>{}</code>',
+            ((item,) for item in (self.color, self.get_image_url()) if item))
+        return bits or _('no image/color')
 
     if sys.version_info.major > 2:
         __str__ = __string_repr
@@ -166,5 +166,24 @@ else:
                 help_text=CssBackgroundAbstractBase._blank_help
             )
 
+            thumbnailoption = models.ForeignKey(
+                'filer.ThumbnailOption',
+                null=True,
+                blank=True,
+                verbose_name=_("Thumbnail Option"),
+                on_delete=models.SET_NULL,
+                help_text=_('Use the thumbnail image size defined by this rule')
+            )
+
             def get_image_url(self):
-                return self.image.url if self.image_id else ''
+                try:
+                    url = self.image.url
+                    try:
+                        thumbnailer = self.image.easy_thumbnails_thumbnailer
+                        option_dict = self.thumbnailoption.as_dict
+                        url = thumbnailer.get_thumbnail(option_dict).url
+                    except AttributeError as e:
+                        pass
+                except AttributeError:
+                    url = ''
+                return url
